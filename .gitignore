@@ -11,3 +11,9 @@ Release/
 *.obj
 *.tlog
 *.log
+# generated outputs
+run_*.txt
+external_input.txt
+external_output.txt
+maxsubseq_results.txt
+*.txt
