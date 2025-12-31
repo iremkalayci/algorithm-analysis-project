@@ -15,28 +15,28 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="231307047.cpp">
+    <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="maxsubseq.cpp">
+    <ClCompile Include="MaxSubsequenceProblem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="recursive.cpp">
+    <ClCompile Include="RecursiveAlgorithms.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="search.cpp">
+    <ClCompile Include="SearchAlgorithms.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="sorts.cpp">
+    <ClCompile Include="SortAlgorithms.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="heap.cpp">
+    <ClCompile Include="HeapStructures.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="greedy.cpp">
+    <ClCompile Include="GreedyAlgorithms.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="dp.cpp">
+    <ClCompile Include="DynamicProgramming.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -56,8 +56,12 @@
     <ClInclude Include="demos.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ui.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="maxsubseq_input.csv" />
+    <None Include=".gitignore" />
   </ItemGroup>
 </Project>

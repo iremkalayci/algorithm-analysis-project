@@ -1,8 +1,70 @@
 #include "heap.h"
 #include <iostream>
 #include <climits>
+#include <iomanip>
+#include <vector>
+#include <string>
 
 using namespace std;
+
+
+// basliklar icin
+static void print_line(char ch, int w) {
+    cout << string(w, ch) << "\n";
+}
+
+static void print_header(const string& title) {
+    cout << "\n";
+    print_line('=', 60);
+    cout << " " << title << "\n";
+    print_line('=', 60);
+}
+
+// heapi kutulu serit halinde yazdirma
+// ustte indeksler, altta degerler
+static void print_heap_box(const BinaryHeap& h, const string& label) {
+    int n = h.size();
+    cout << "\n-> " << label << " (Boyut: " << n << ")\n";
+
+    if (n == 0) {
+        cout << "[BOS HEAP]\n";
+        return;
+    }
+
+    const int cellW = 6;
+
+    cout << "  +";
+    for (int i = 0; i < n; i++) cout << string(cellW, '-') << "+";
+    cout << "\n";
+
+    cout << "  |";
+    for (int i = 1; i <= n; i++) {
+        cout << right << setw(cellW) << i << "|";
+    }
+    cout << "\n";
+
+    cout << "  +";
+    for (int i = 0; i < n; i++) cout << string(cellW, '-') << "+";
+    cout << "\n";
+
+    cout << "  |";
+    for (int i = 1; i <= n; i++) {
+        cout << right << setw(cellW) << h.H[i] << "|";
+    }
+    cout << "\n";
+
+    cout << "  +";
+    for (int i = 0; i < n; i++) cout << string(cellW, '-') << "+";
+    cout << "\n";
+}
+
+// tekil islem sonucu yazdirma
+static void print_action_result(const string& action, int result) {
+    cout << "\n   [ISLEM] " << left << setw(20) << action << " : " << result << "\n" << right;
+}
+
+
+
 
 BinaryHeap::BinaryHeap() : H(1, 0), N(0) {
     // H[0] bos kalsin 1-indexed heap
@@ -12,7 +74,7 @@ bool BinaryHeap::empty() const { return N == 0; }
 int  BinaryHeap::size()  const { return N; }
 
 int BinaryHeap::findMin() const {
-    if (N <= 0) return INT_MAX; 
+    if (N <= 0) return INT_MAX;
     return H[1];
 }
 
@@ -27,12 +89,12 @@ void BinaryHeap::insertKey(int key) {
     int node = N;
     while (1) {
         int parent = node / 2;
-        if (parent < 1) return;              // root'a geldik
-        if (H[parent] < H[node]) return;     // parent zaten kucuk > min-heap ok
+        if (parent < 1) return;
+        if (H[parent] < H[node]) return;
         int tmp = H[node];
         H[node] = H[parent];
         H[parent] = tmp;
-        node = parent;                       // bir seviye yukari
+        node = parent;
     }
 }
 
@@ -129,21 +191,21 @@ void BinaryHeap::heapifyUpMax(int node) {
 
 void BinaryHeap::decreaseKey(int index, int newKey) {
     if (index < 1 || index > N) return;
-    if (newKey > H[index]) return; // decrease olmasi lazim
+    if (newKey > H[index]) return;
     H[index] = newKey;
     heapifyUpMin(index);
 }
 
 void BinaryHeap::increaseKey(int index, int newKey) {
     if (index < 1 || index > N) return;
-    if (newKey < H[index]) return; // increase olmasi lazim
+    if (newKey < H[index]) return;
     H[index] = newKey;
     heapifyDownMin(index);
 }
 
 void BinaryHeap::deleteKey(int index) {
     if (index < 1 || index > N) return;
-   
+
     decreaseKey(index, INT_MIN);
     deleteMin();
 }
@@ -162,14 +224,10 @@ BinaryHeap BinaryHeap::mergeHeaps(const BinaryHeap& h1, const BinaryHeap& h2) {
 }
 
 
-static void printHeapArray(const BinaryHeap& h) {
-    cout << "H[1..N]: ";
-    for (int i = 1; i <= h.N; i++) cout << h.H[i] << " ";
-    cout << "\n";
-}
+
 
 void run_heap_demo() {
-    cout << "\n--- Heap Yapilari Demo (min-heap) ---\n";
+    print_header("HEAP YAPILARI");
 
     BinaryHeap h;
     h.insertKey(10);
@@ -178,54 +236,51 @@ void run_heap_demo() {
     h.insertKey(1);
     h.insertKey(15);
 
-    cout << "InsertKey sonrasi:\n";
-    printHeapArray(h);
+    print_heap_box(h, "Insert Islemleri Sonrasi");
 
-    cout << "findMin: " << h.findMin() << "\n";
-    cout << "deleteMin: " << h.deleteMin() << "\n";
-    cout << "deleteMin sonrasi:\n";
-    printHeapArray(h);
+    print_action_result("findMin()", h.findMin());
+    print_action_result("deleteMin()", h.deleteMin());
 
-    // decrease n increase
-   
+    print_heap_box(h, "DeleteMin Sonrasi");
+
     if (h.size() >= 3) {
-        cout << "decreaseKey(index=3, newKey=0)\n";
         h.decreaseKey(3, 0);
-        printHeapArray(h);
+        print_heap_box(h, "decreaseKey(idx=3, val=0)");
     }
 
     if (h.size() >= 2) {
-        cout << "increaseKey(index=2, newKey=99)\n";
         h.increaseKey(2, 99);
-        printHeapArray(h);
+        print_heap_box(h, "increaseKey(idx=2, val=99)");
     }
 
     if (h.size() >= 2) {
-        cout << "deleteKey(index=2)\n";
         h.deleteKey(2);
-        printHeapArray(h);
+        print_heap_box(h, "deleteKey(idx=2)");
     }
 
-    // buildheap min,max
+    print_header("Build Heap & Merge Demo");
+
     vector<int> arr = { 9, 3, 8, 2, 6, 5 };
+
+    cout << "\n   Girdi Dizisi: { ";
+    for (int x : arr) cout << x << " ";
+    cout << "}\n";
+
     BinaryHeap hMin;
     hMin.buildMinHeap(arr);
-    cout << "\nbuildMinHeap:\n";
-    printHeapArray(hMin);
+    print_heap_box(hMin, "buildMinHeap Sonucu");
 
     BinaryHeap hMax;
     hMax.buildMaxHeap(arr);
-    cout << "buildMaxHeap:\n";
-    printHeapArray(hMax);
+    print_heap_box(hMax, "buildMaxHeap Sonucu");
 
-    // merge
     BinaryHeap a, b;
     a.insertKey(5); a.insertKey(12); a.insertKey(1);
     b.insertKey(7); b.insertKey(2);
 
-    BinaryHeap m = BinaryHeap::mergeHeaps(a, b);
-    cout << "\nMerge(H1,H2) sonucu (min-heap):\n";
-    printHeapArray(m);
+    print_heap_box(a, "Heap A");
+    print_heap_box(b, "Heap B");
 
-    cout << "Demo bitti.\n";
+    BinaryHeap m = BinaryHeap::mergeHeaps(a, b);
+    print_heap_box(m, "Merge(A, B) Sonucu (Min-Heap)");
 }

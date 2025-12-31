@@ -1,13 +1,12 @@
-#include <iostream>
+﻿#include <iostream>
 #include <vector>
 #include <iomanip>
 #include <climits>
 #include <string>
+#include <algorithm> 
 
 using namespace std;
 
-
-// [A] Fibonacci: TopDown + Bottomup DP 
 
 
 static int FibTopDownAux(int n, vector<int>& solTable) {
@@ -53,11 +52,47 @@ static int BottomUpDP2(int n) {
     return result;
 }
 
-static void print_1d_table(const vector<int>& t, const string& name) {
-    cout << name << " index: ";
-    for (int i = 0; i < (int)t.size(); i++) cout << setw(4) << i;
-    cout << "\n" << name << " value: ";
-    for (int v : t) cout << setw(4) << v;
+
+
+// basliklar icin cizgi
+static void print_line(char ch, int w) {
+    cout << string(w, ch) << "\n";
+}
+
+// bolum basligi
+static void print_section(const string& title) {
+    cout << "\n";
+    print_line('#', 60);
+    cout << "# " << left << setw(56) << title << " #\n";
+    print_line('#', 60);
+    cout << "\n";
+}
+
+// alt baslik
+static void print_subtitle(const string& title) {
+    cout << "\n--- " << title << " ---\n";
+}
+
+// 1D tabloyu kutu icinde yazdirma
+static void print_1d_values(const vector<int>& t, const string& label) {
+    cout << "\n" << label << ":\n";
+
+    // ust Cizgi
+    cout << "+";
+    for (size_t i = 0; i < t.size(); i++) cout << "-----+";
+    cout << "\n";
+
+    // degerler
+    cout << "|";
+    for (int v : t) {
+        if (v == -1) cout << "  -  |";
+        else cout << setw(4) << v << " |";
+    }
+    cout << "\n";
+
+    // alt Cizgi
+    cout << "+";
+    for (size_t i = 0; i < t.size(); i++) cout << "-----+";
     cout << "\n";
 }
 
@@ -104,19 +139,36 @@ static int MinimumCostPath_TopDown(const vector<vector<int>>& M, vector<vector<i
     return MinCostAux(M, 0, 0, T);
 }
 
+// 2D tabloyu izgara seklinde yazdirma
 static void print_2d_table(const vector<vector<int>>& T, const string& name) {
-    cout << name << ":\n";
+    if (T.empty()) return;
+    int cols = (int)T[0].size();
+
+    cout << "\nTABLO: " << name << "\n";
+
+    // ust Cizgi
+    cout << "+";
+    for (int c = 0; c < cols; c++) cout << "-------+";
+    cout << "\n";
+
     for (int i = 0; i < (int)T.size(); i++) {
+        cout << "|";
         for (int j = 0; j < (int)T[i].size(); j++) {
-            if (T[i][j] == INT_MAX) cout << setw(6) << "INF";
-            else cout << setw(6) << T[i][j];
+            if (T[i][j] == INT_MAX) cout << "  INF  |";
+            else if (T[i][j] == -1) cout << "   -   |";
+            else cout << setw(6) << T[i][j] << " |";
         }
+        cout << "\n";
+
+        // Ara/Alt Cizgi
+        cout << "+";
+        for (int c = 0; c < cols; c++) cout << "-------+";
         cout << "\n";
     }
 }
 
 
-// [C] 0-1 Knapsack
+// [C] 0-1 knapsack
 
 //BottomUp DP tablosu yapim
 
@@ -157,22 +209,83 @@ static vector<int> Knapsack_Reconstruct(const vector<int>& v, const vector<int>&
     return picked;
 }
 
-static void print_knapsack_table(const vector<vector<int>>& dp) {
-    cout << "DP tablosu (satir=item, sutun=kapasite):\n";
+// Knapsack tablosunun ozetini cizgili yazdirma
+static void print_knapsack_table_compact(const vector<vector<int>>& dp, const vector<int>& caps) {
+    int n = (int)dp.size() - 1;
+
+    cout << "\nKnapsack Ozet\n";
+
+    // Cizgi
+    cout << "+----------+";
+    for (size_t i = 0; i < caps.size(); i++) cout << "-------+";
+    cout << "\n";
+
+    // Basliklar
+    cout << "| Kapasite |";
+    for (int c : caps) cout << setw(6) << c << " |";
+    cout << "\n";
+
+    // Ara Cizgi
+    cout << "+----------+";
+    for (size_t i = 0; i < caps.size(); i++) cout << "-------+";
+    cout << "\n";
+
+    // Degerler
+    cout << "| Deger    |";
+    for (int c : caps) cout << setw(6) << dp[n][c] << " |";
+    cout << "\n";
+
+    // Alt Cizgi
+    cout << "+----------+";
+    for (size_t i = 0; i < caps.size(); i++) cout << "-------+";
+    cout << "\n";
+}
+
+// Knapsack adimli tablo cizgili
+static void print_knapsack_table_step(const vector<vector<int>>& dp, int W, int step) {
+    cout << "\nDP Tablosu:\n";
+
+    // Sutun sayisi hesaplama
+    int cols = 0;
+    for (int cap = 0; cap <= W; cap += step) cols++;
+
+    // Ust Cizgi
+    cout << "+-------+";
+    for (int k = 0; k < cols; k++) cout << "-------+";
+    cout << "\n";
+
+    // Header
+    cout << "| i \\ W |";
+    for (int cap = 0; cap <= W; cap += step) cout << setw(6) << cap << " |";
+    cout << "\n";
+
+    // Ara Cizgi
+    cout << "+-------+";
+    for (int k = 0; k < cols; k++) cout << "-------+";
+    cout << "\n";
+
     for (int i = 0; i < (int)dp.size(); i++) {
-        for (int j = 0; j < (int)dp[i].size(); j++) {
-            cout << setw(4) << dp[i][j];
+        cout << "| Item" << setw(1) << i << " |";
+        for (int cap = 0; cap <= W; cap += step) {
+            cout << setw(6) << dp[i][cap] << " |";
         }
+        cout << "\n";
+
+        // Satir alt cizgisi
+        cout << "+-------+";
+        for (int k = 0; k < cols; k++) cout << "-------+";
         cout << "\n";
     }
 }
 
 
 void run_dp_demo() {
-  
+
+
+
     // [A] Fibonacci
     {
-        cout << "\n[A] Fibonacci: Top-Down vs Bottom-Up\n";
+        print_subtitle("A) Fibonacci Top-Down and Bottom-Up");
         int n = 10;
 
         vector<int> solTop;
@@ -183,18 +296,19 @@ void run_dp_demo() {
 
         int f_bu2 = BottomUpDP2(n);
 
-        cout << "F(" << n << ") Top-Down = " << f_td << "\n";
-        print_1d_table(solTop, "SolTable(TD)");
+        cout << "n = " << n << "\n";
+        cout << "Top-Down Result  : " << f_td << "\n";
+        print_1d_values(solTop, "TopDown Table");
 
-        cout << "F(" << n << ") BottomUpDP = " << f_bu << "\n";
-        print_1d_table(solBU, "SolTable(BU)");
+        cout << "Bottom-Up Result : " << f_bu << "\n";
+        print_1d_values(solBU, "BottomUp Table");
 
-        cout << "F(" << n << ") BottomUpDP2 = " << f_bu2 << " (O(1) space)\n";
+        cout << "BottomUpDP2      : " << f_bu2 << " (O(1) space)\n";
     }
 
     //[B] Min Cost Path TopDown
     {
-        cout << "\n[B] Minimum Cost Path (Top-Down + memo table)\n";
+        print_subtitle("B) Minimum Cost Path (Top-Down + Memo Table)");
 
         // orn M matrisi
         vector<vector<int>> M = {
@@ -207,18 +321,16 @@ void run_dp_demo() {
         vector<vector<int>> T;
         int minCost = MinimumCostPath_TopDown(M, T);
 
-        cout << "Minimum cost (0,0) -> (N-1,N-1): " << minCost << "\n";
-        cout << "M matrisi:\n";
-        print_2d_table(M, "M");
-        cout << "Memo/DP tablosu (T):\n";
-        print_2d_table(T, "T");
+        print_2d_table(M, "M Matrisi (Maliyetler)");
+        cout << "\n";
+        print_2d_table(T, "Memo/DP Tablosu (T)");
+        cout << "\nMinimum cost (0,0) -> (N-1,N-1): " << minCost << "\n";
     }
 
     //[C] 0-1 Knapsack
     {
-        cout << "\n[C] 0-1 Knapsack (DP tablosu)\n";
+        print_subtitle("C) 0-1 knapsack (bottom up DP)");
 
-       
         // v = {30,20,100,90,160}, w={5,10,20,30,40}, W=60
         int n = 5;
         int W = 60;
@@ -230,18 +342,24 @@ void run_dp_demo() {
         vector<vector<int>> dp;
         int best = Knapsack01_BottomUp(v, w, W, dp);
 
-        cout << "bst value = " << best << " (W=" << W << ")\n";
-        print_knapsack_table(dp);
+        cout << "W = " << W << "\n";
+        cout << "Best value = " << best << "\n";
+
+       
+        vector<int> caps = { 0,10,20,30,40,50,60 };
+        print_knapsack_table_compact(dp, caps);
+
+        
+        int step = 10; 
+        print_knapsack_table_step(dp, W, step);
 
         vector<int> picked = Knapsack_Reconstruct(v, w, W, dp);
-        cout << "secilen item'lar: ";
+        cout << "\nSecilen item'lar: ";
         for (int id : picked) cout << id << " ";
         cout << "\n";
 
         int totalW = 0, totalV = 0;
         for (int id : picked) { totalW += w[id]; totalV += v[id]; }
-        cout << "toplam agirlik = " << totalW << ", toplam deger = " << totalV << "\n";
+        cout << "Toplam agirlik = " << totalW << ", toplam deger = " << totalV << "\n";
     }
-
-    cout << "\nDP demo bitti.\n";
 }

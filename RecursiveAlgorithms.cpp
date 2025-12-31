@@ -1,5 +1,7 @@
 #include <iostream>
 #include <vector>
+#include <iomanip>
+#include <string>
 
 using namespace std;
 
@@ -14,27 +16,6 @@ long long cnt_digitSum = 0;
 /* 1) 1 + 2 + ... + N */
 int sumN(int n) {
     cnt_sumN++;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     if (n == 0)
         return 0;
     return n + sumN(n - 1);
@@ -82,33 +63,110 @@ int digitSum(int n) {
     return (n % 10) + digitSum(n / 10);
 }
 
-
-void run_recursive_demo() {
-
-    int N = 10;
-    cnt_sumN = 0;
-    cout << "Sum 1..N = " << sumN(N)
-         << " | Recursive calls = " << cnt_sumN << endl;
-
-    vector<int> arr = {1, 2, 3, 4, 5};
-    cnt_arraySum = 0;
-    cout << "Array sum = " << arraySum(arr, (int)arr.size())
-         << " | Recursive calls = " << cnt_arraySum << endl;
-
-    cnt_power = 0;
-    cout << "2^5 = " << power(2, 5)
-         << " | Recursive calls = " << cnt_power << endl;
-
-    cnt_fib = 0;
-    cout << "Fibonacci(6) = " << fibonacci(6)
-         << " | Recursive calls = " << cnt_fib << endl;
-
-    cnt_hanoi = 0;
-    hanoi(3, 'A', 'C', 'B');
-    cout << "Hanoi (n=3) recursive calls = " << cnt_hanoi << endl;
-
-    cnt_digitSum = 0;
-    cout << "Digit sum(12345) = " << digitSum(12345)
-         << " | Recursive calls = " << cnt_digitSum << endl;
+static void line(int w = 74, char ch = '-') {
+    for (int i = 0; i < w; i++) cout << ch;
+    cout << "\n";
 }
 
+// 4 Sutunlu tablo cizgisi cizen yardimci fonksiyon
+void drawRecLine(int w1, int w2, int w3, int w4) {
+    // +----------------+------------+----------+----------+ seklinde cizer
+    cout << "+" << string(w1, '-') << "+" << string(w2, '-')
+        << "+" << string(w3, '-') << "+" << string(w4, '-') << "+\n";
+}
+
+void run_recursive_demo() {
+    // Sutun Genislikleri
+    const int c1 = 26; // Problem
+    const int c2 = 18; // Girdi
+    const int c3 = 14; // Sonuc
+    const int c4 = 14; // Cagri
+
+    cout << "\n   RECURSIVE ALGORITMALAR\n";
+
+    
+    drawRecLine(c1, c2, c3, c4);
+
+   
+    cout << "| " << left << setw(c1 - 2) << "Problem"
+        << " | " << left << setw(c2 - 2) << "Girdi"
+        << " | " << left << setw(c3 - 2) << "Sonuc"
+        << " | " << left << setw(c4 - 2) << "Cagri"
+        << " |\n";
+
+    
+    drawRecLine(c1, c2, c3, c4);
+
+    //Sum 1..N
+    int N = 10;
+    cnt_sumN = 0;
+    int s1 = sumN(N);
+
+    cout << "| " << left << setw(c1 - 2) << "Sum 1..N"
+        << " | " << left << setw(c2 - 2) << ("N=" + to_string(N))
+        << " | " << left << setw(c3 - 2) << s1
+        << " | " << left << setw(c4 - 2) << cnt_sumN
+        << " |\n";
+    drawRecLine(c1, c2, c3, c4);
+
+    //array sum
+    vector<int> arr = { 1, 2, 3, 4, 5 };
+    cnt_arraySum = 0;
+    int s2 = arraySum(arr, (int)arr.size());
+
+    cout << "| " << left << setw(c1 - 2) << "Array sum"
+        << " | " << left << setw(c2 - 2) << ("n=" + to_string((int)arr.size()))
+        << " | " << left << setw(c3 - 2) << s2
+        << " | " << left << setw(c4 - 2) << cnt_arraySum
+        << " |\n";
+    drawRecLine(c1, c2, c3, c4);
+
+    //a^n
+    cnt_power = 0;
+    long long s3 = power(2, 5);
+
+    cout << "| " << left << setw(c1 - 2) << "Power a^n"
+        << " | " << left << setw(c2 - 2) << "a=2, n=5"
+        << " | " << left << setw(c3 - 2) << s3
+        << " | " << left << setw(c4 - 2) << cnt_power
+        << " |\n";
+    drawRecLine(c1, c2, c3, c4);
+
+   
+    cnt_fib = 0;
+    long long s4 = fibonacci(6);
+
+    cout << "| " << left << setw(c1 - 2) << "Fibonacci"
+        << " | " << left << setw(c2 - 2) << "n=6"
+        << " | " << left << setw(c3 - 2) << s4
+        << " | " << left << setw(c4 - 2) << cnt_fib
+        << " |\n";
+    drawRecLine(c1, c2, c3, c4);
+
+    //Hanoi
+   
+    cnt_hanoi = 0;
+   
+    hanoi(3, 'A', 'C', 'B');
+
+    cout << "| " << left << setw(c1 - 2) << "Tower of Hanoi"
+        << " | " << left << setw(c2 - 2) << "n=3"
+        << " | " << left << setw(c3 - 2) << "-"
+        << " | " << left << setw(c4 - 2) << cnt_hanoi
+        << " |\n";
+    drawRecLine(c1, c2, c3, c4);
+
+    
+    cnt_digitSum = 0;
+    int s6 = digitSum(12345);
+
+    cout << "| " << left << setw(c1 - 2) << "Recursive Digit Sum"
+        << " | " << left << setw(c2 - 2) << "n=12345"
+        << " | " << left << setw(c3 - 2) << s6
+        << " | " << left << setw(c4 - 2) << cnt_digitSum
+        << " |\n";
+
+    
+    drawRecLine(c1, c2, c3, c4);
+    cout << "\n";
+}

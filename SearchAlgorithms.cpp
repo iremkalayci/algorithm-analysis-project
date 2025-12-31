@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <iomanip>
 
 using namespace std;
 
@@ -49,29 +50,44 @@ int binarySearchIter(const vector<int>& a, int key) {
     return -1;
 }
 
-
 void run_search_demo() {
 
     vector<int> data = { 3, 7, 12, 18, 25, 31, 42, 56, 63, 78 };
     int key = 42;
 
-    cout << "\n--- Arama Algoritmalari ---\n";
+  
     cout << "Aranan deger: " << key << "\n\n";
 
+    cout << left
+        << setw(28) << "Algoritma"
+        << setw(12) << "Index"
+        << setw(16) << "Karsilastirma"
+        << "\n";
+    cout << string(56, '-') << "\n";
+
     int idx1 = linearSearchForward(data, key);
-    cout << "Ileri Lineer Arama -> index: " << idx1
-        << " | karsilastirma: " << cnt_linear_fwd << endl;
+    cout << left
+        << setw(28) << "Ileri Lineer Arama"
+        << setw(12) << idx1
+        << setw(16) << cnt_linear_fwd
+        << "\n";
 
     int idx2 = linearSearchBackward(data, key);
-    cout << "Geri Lineer Arama  -> index: " << idx2
-        << " | karsilastirma: " << cnt_linear_bwd << endl;
+    cout << left
+        << setw(28) << "Geri Lineer Arama"
+        << setw(12) << idx2
+        << setw(16) << cnt_linear_bwd
+        << "\n";
 
-    
-    //sirali olmaasini garantiledim.
     vector<int> sorted = data;
     sort(sorted.begin(), sorted.end());
 
     int idx3 = binarySearchIter(sorted, key);
-    cout << "Ikili Arama        -> index: " << idx3
-        << " | karsilastirma: " << cnt_binary << endl;
+    cout << left
+        << setw(28) << "Ikili Arama"
+        << setw(12) << idx3
+        << setw(16) << cnt_binary
+        << "\n";
+
+    cout << string(56, '-') << "\n";
 }

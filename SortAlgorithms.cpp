@@ -36,7 +36,7 @@ vector<int> make_random_ints(int n, int minV = -100000, int maxV = 100000) {
 }
 
 
-// 1) Selection Sort
+// 1) selection Sort
 void selectionSort(vector<int>& A) {
     int N = (int)A.size();
     for (int i = 0; i < N - 1; i++) {
@@ -48,7 +48,7 @@ void selectionSort(vector<int>& A) {
     }
 }
 
-// 2) Bubble Sort
+// 2) bubble Sort
 void bubbleSort(vector<int>& A) {
     int N = (int)A.size();
     for (int i = 0; i < N; i++) {
@@ -58,7 +58,7 @@ void bubbleSort(vector<int>& A) {
     }
 }
 
-// 3) Insertion Sort
+// 3) nsertion Sort
 void insertionSort(vector<int>& A) {
     int N = (int)A.size();
     int j, P, Tmp;
@@ -217,12 +217,12 @@ void countingSortSatellite(vector<SatRec>& A, int maxKey) {
 
     for (auto& x : A) C[x.key]++;
 
-    // prefx sum - stable icin pozisyon
+    // prefx sum  stable icin pozisyon
     for (int i = 1; i <= maxKey; i++) C[i] += C[i - 1];
 
     vector<SatRec> B(A.size());
 
-    // stable-sondan basa
+    // stable sondan basa
     for (int i = (int)A.size() - 1; i >= 0; i--) {
         int k = A[i].key;
         B[--C[k]] = A[i];
@@ -231,7 +231,7 @@ void countingSortSatellite(vector<SatRec>& A, int maxKey) {
 }
 
 
-// radix Sort - int icin (negatif destekli)
+// radix Sort int icin -destekli
 // negatifleri ve pozitifleri ayir, abs ile radix, sonra birlestir.
 static void countingPassBase10(vector<int>& A, int exp) {
     int N = (int)A.size();
@@ -357,45 +357,70 @@ void externalSortFile(const string& inputPath, const string& outputPath, int chu
 
 }
 
+// tablo cizgilerini kolaylastirmak icin yardimci fonksiyon
+void drawLine(int w1, int w2) {
+    // +-------------------------+-----------------+ seklinde satir cizer
+    cout << "+" << string(w1, '-') << "+" << string(w2, '-') << "+\n";
+}
+
 void run_sorts_demo() {
-    int n = 5000; 
+    int n = 5000;
     vector<int> base = make_random_ints(n);
 
-    cout << "\n--- Siralama Algoritmalari (chrono, us) n=" << n << " ---\n";
-    cout << left << setw(22) << "Algoritma" << "Sure(us)\n";
-    cout << string(34, '-') << "\n";
+    // sutun genislikleri 
+    const int col1 = 25; // algoritma ismi icin genislik
+    const int col2 = 15; // sure icin genislik
 
-    
-    cout << left << setw(22) << "Selection" << measure_us([&] {
-        auto a = base; selectionSort(a);
-        }, 1) << "\n";
+    cout << "\n   SIRALAMA ALGORITMALARI PERFORMANS TABLOSU (n=" << n << ")\n";
 
-    cout << left << setw(22) << "Bubble" << measure_us([&] {
-        auto a = base; bubbleSort(a);
-        }, 1) << "\n";
+    // 1. UST CIZGI
+    drawLine(col1, col2);
 
-    cout << left << setw(22) << "Insertion" << measure_us([&] {
-        auto a = base; insertionSort(a);
-        }, 1) << "\n";
+    // 2. BASLIK SATIRI
+    cout << "| " << left << setw(col1 - 2) << "Algoritma"
+        << " | " << left << setw(col2 - 2) << "Sure (us)" << " |\n";
 
-    // nlogn olanlar 3 tekrar min al
-    cout << left << setw(22) << "Merge" << measure_us([&] {
-        auto a = base; mergeSort(a);
-        }, 3) << "\n";
+    // 3. BASLIK ALTI CIZGISI
+    drawLine(col1, col2);
 
-    cout << left << setw(22) << "Quick (first pivot)" << measure_us([&] {
-        auto a = base; quickSort_firstPivot(a);
-        }, 3) << "\n";
+    // --- VERILER ---
 
-    cout << left << setw(22) << "Quick (medianOf3)" << measure_us([&] {
-        auto a = base; quickSort_medianOf3(a);
-        }, 3) << "\n";
+    // Selection
+    cout << "| " << left << setw(col1 - 2) << "Selection Sort"
+        << " | " << left << setw(col2 - 2) << measure_us([&] { auto a = base; selectionSort(a); }, 1) << " |\n";
+    drawLine(col1, col2);
 
-    cout << left << setw(22) << "Heap" << measure_us([&] {
-        auto a = base; heapSort(a);
-        }, 3) << "\n";
+    // Bubble
+    cout << "| " << left << setw(col1 - 2) << "Bubble Sort"
+        << " | " << left << setw(col2 - 2) << measure_us([&] { auto a = base; bubbleSort(a); }, 1) << " |\n";
+    drawLine(col1, col2);
 
-    // counting sort satellite demo (key 0..999)
+    // Insertion
+    cout << "| " << left << setw(col1 - 2) << "Insertion Sort"
+        << " | " << left << setw(col2 - 2) << measure_us([&] { auto a = base; insertionSort(a); }, 1) << " |\n";
+    drawLine(col1, col2);
+
+    // Merge
+    cout << "| " << left << setw(col1 - 2) << "Merge Sort"
+        << " | " << left << setw(col2 - 2) << measure_us([&] { auto a = base; mergeSort(a); }, 3) << " |\n";
+    drawLine(col1, col2);
+
+    // Quick 1
+    cout << "| " << left << setw(col1 - 2) << "Quick (First Pivot)"
+        << " | " << left << setw(col2 - 2) << measure_us([&] { auto a = base; quickSort_firstPivot(a); }, 3) << " |\n";
+    drawLine(col1, col2);
+
+    // Quick 2
+    cout << "| " << left << setw(col1 - 2) << "Quick (MedianOf3)"
+        << " | " << left << setw(col2 - 2) << measure_us([&] { auto a = base; quickSort_medianOf3(a); }, 3) << " |\n";
+    drawLine(col1, col2);
+
+    // Heap
+    cout << "| " << left << setw(col1 - 2) << "Heap Sort"
+        << " | " << left << setw(col2 - 2) << measure_us([&] { auto a = base; heapSort(a); }, 3) << " |\n";
+    drawLine(col1, col2);
+
+    // Counting
     vector<SatRec> sat(20000);
     {
         mt19937 rng(42);
@@ -403,17 +428,16 @@ void run_sorts_demo() {
         uniform_int_distribution<int> satDist(100000, 999999);
         for (auto& r : sat) { r.key = keyDist(rng); r.sat = satDist(rng); }
     }
-    cout << left << setw(22) << "Counting (satellite)" << measure_us([&] {
-        auto a = sat; countingSortSatellite(a, 999);
-        }, 3) << "\n";
+    cout << "| " << left << setw(col1 - 2) << "Counting (Sat)"
+        << " | " << left << setw(col2 - 2) << measure_us([&] { auto a = sat; countingSortSatellite(a, 999); }, 3) << " |\n";
+    drawLine(col1, col2);
 
-    // radix demo
-    cout << left << setw(22) << "Radix (int)" << measure_us([&] {
-        auto a = base; radixSortInt(a);
-        }, 3) << "\n";
+    // Radix
+    cout << "| " << left << setw(col1 - 2) << "Radix Sort (Int)"
+        << " | " << left << setw(col2 - 2) << measure_us([&] { auto a = base; radixSortInt(a); }, 3) << " |\n";
+    drawLine(col1, col2);
 
-    // External sort demo: input ve output dosya olusturur,
-    // bu dosyalar proje klasorune geliyor.
+    // External
     {
         string inF = "external_input.txt";
         string outF = "external_output.txt";
@@ -421,11 +445,10 @@ void run_sorts_demo() {
         for (int i = 0; i < 50000; i++) fout << base[i % (int)base.size()] << "\n";
         fout.close();
 
-        cout << left << setw(22) << "External sort (file)" << measure_us([&] {
-            externalSortFile(inF, outF, 5000);
-            }, 1) << "\n";
+        cout << "| " << left << setw(col1 - 2) << "External Sort"
+            << " | " << left << setw(col2 - 2) << measure_us([&] { externalSortFile(inF, outF, 5000); }, 1) << " |\n";
     }
+    drawLine(col1, col2);
 
-    cout << string(34, '-') << "\n";
-   
+    cout << "\n";
 }

@@ -3,6 +3,10 @@
 #include <algorithm>
 #include <unordered_map>
 #include <queue>
+#include <iomanip>
+#include <string>
+
+using namespace std;
 
 //Activity Scheduling
 // 1) finish time'a gore sirala
@@ -111,17 +115,18 @@ static HNode* buildHuffmanTree(const std::string& text) {
 
     if (pq.empty()) return nullptr;
 
-   
+
     // while Q has more than 1 element:
-    //   x = extractMin
-    //   y = extractMin
-    //   z = new internal node, z.left=x, z.right=y
-    //   z.freq = x.freq + y.freq
-    //   Q.insert(z)
+    //    x = extractMin
+    //    y = extractMin
+    //    z = new internal node, z.left=x, z.right=y
+    //    z.freq = x.freq + y.freq
+    //    Q.insert(z)
     while ((int)pq.size() > 1) {
         HNode* x = pq.top(); pq.pop();
         HNode* y = pq.top(); pq.pop();
         HNode* z = new HNode(x, y);
+        z->freq = x->freq + y->freq;
         pq.push(z);
     }
 
@@ -171,14 +176,50 @@ HuffmanResult huffman_demo(const std::string& text) {
     return r;
 }
 
+static void print_line(char ch, int w) {
+    cout << string(w, ch) << "\n";
+}
+
+static void print_header(const string& title) {
+    cout << "\n";
+    print_line('=', 60);
+    cout << " " << title << "\n";
+    print_line('=', 60);
+}
+
+static void print_activity_table(const std::vector<Activity>& chosen) {
+    cout << "\nSecilen Aktiviteler:\n";
+    cout << "+------+-------+--------+\n";
+    cout << "|  ID  | Start | Finish |\n";
+    cout << "+------+-------+--------+\n";
+    for (const auto& x : chosen) {
+        cout << "| " << setw(4) << x.id << " | " << setw(5) << x.s << " | " << setw(6) << x.f << " |\n";
+    }
+    cout << "+------+-------+--------+\n";
+    cout << "Toplam Secilen: " << chosen.size() << "\n";
+}
+
+static void print_job_table(const JobScheduleResult& res) {
+    cout << "\nZaman Cizelgesi (Slots):\n";
+    cout << "+------+--------+\n";
+    cout << "| Slot | Job ID |\n";
+    cout << "+------+--------+\n";
+    for (int t = 1; t < (int)res.slotToJobId.size(); t++) {
+        cout << "| " << setw(4) << t << " | ";
+        if (res.slotToJobId[t] != -1) cout << setw(6) << res.slotToJobId[t] << " |\n";
+        else cout << "   -   |\n";
+    }
+    cout << "+------+--------+\n";
+    cout << "Toplam Kar (Profit): " << res.totalProfit << "\n";
+}
 
 void run_greedy_demo() {
-    using std::cout;
-
+   
 
     // A) Aktivite Zamanlama
     {
-        cout << "\n[A] Activity Scheduling\n";
+        cout << "\n[A] ACTIVITY SCHEDULING\n";
+        print_line('-', 40);
         std::vector<Activity> a = {
             {1, 1, 4}, {2, 3, 5}, {3, 0, 6}, {4, 5, 7},
             {5, 3, 9}, {6, 5, 9}, {7, 6,10}, {8, 8,11},
@@ -186,38 +227,35 @@ void run_greedy_demo() {
         };
 
         auto chosen = activityScheduling(a);
-        cout << "Secilen aktiviteler (id, s, f):\n";
-        for (auto& x : chosen) {
-            cout << "  (" << x.id << ", " << x.s << ", " << x.f << ")\n";
-        }
+        print_activity_table(chosen);
     }
 
     // B) Is Zamanlama 
     {
-        cout << "\n[B] Job Sequencing (deadline + profit)\n";
+        cout << "\n[B] JOB SEQUENCING (Deadline + Profit)\n";
+        print_line('-', 40);
         std::vector<Job> jobs = {
             {1, 2, 100}, {2, 1, 19}, {3, 2, 27}, {4, 1, 25}, {5, 3, 15}
         };
 
         auto res = jobSequencing(jobs);
-        cout << "Total profit: " << res.totalProfit << "\n";
-        cout << "Slot -> jobId:\n";
-        for (int t = 1; t < (int)res.slotToJobId.size(); t++) {
-            cout << "  t=" << t << " : " << res.slotToJobId[t] << "\n";
-        }
+        print_job_table(res);
     }
 
     // C) Huffman encode decode
     {
-        cout << "\n[C] Huffman (encode/decode)\n";
+        cout << "\n[C] HUFFMAN CODING (Encode/Decode)\n";
+        print_line('-', 40);
         std::string text = "huffman coding demo";
         auto r = huffman_demo(text);
-        cout << "Text   : " << text << "\n";
-        cout << "Encoded: " << r.encodedBits.substr(0, 80);
-        if ((int)r.encodedBits.size() > 80) cout << "...";
-        cout << "\n";
-        cout << "Decoded: " << r.decodedText << "\n";
+
+        cout << "Girdi Metin : " << text << "\n";
+        cout << "Encoded Bits: " << r.encodedBits << "\n";
+        cout << "Decoded Text: " << r.decodedText << "\n";
     }
 
-    cout << "\ngreedy demo bitti.\n";
+    cout << "\n";
+    print_line('=', 60);
+    cout << "Demo bitti.\n";
+    print_line('=', 60);
 }
